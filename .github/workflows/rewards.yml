@@ -1,0 +1,17 @@
+name: Rewards via Docker
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+jobs:
+  run-docker:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/hex-ci/microsoft-rewards-script:latest
+      env:
+        ACCOUNTS_JSON: ${{ secrets.ACCOUNTS_JSON }}
+    steps:
+      - name: Run script in container
+        run: python main.py
