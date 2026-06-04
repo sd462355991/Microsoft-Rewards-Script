@@ -1,4 +1,4 @@
-name: Rewards via Docker
+name: Rewards Auto Run
 
 on:
   schedule:
@@ -6,12 +6,24 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-docker:
+  run-python:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/hex-ci/microsoft-rewards-script:latest
-      env:
-        ACCOUNTS_JSON: ${{ secrets.ACCOUNTS_JSON }}
     steps:
-      - name: Run script in container
-        run: python main.py
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run script
+        env:
+          ACCOUNTS_JSON: ${{ secrets.ACCOUNTS_JSON }}
+        run: |
+          echo "$ACCOUNTS_JSON" > accounts.json
+          python main.py
